@@ -25,7 +25,21 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const database = client.db("coffeeStore");
+    const userCollection = database.collection("userAmin");
+
+    app.get('/coffees', async(req, res)=>{
+        const allData = userCollection.find()
+        const result = await allData.toArray()
+        res.send(result)
+    })
     
+    app.post('/coffees', async(req, res)=>{
+        const coffee = req.body;
+        const result = await userCollection.insertOne(coffee)
+        res.send(result)
+    })
     
 
     // Send a ping to confirm a successful connection
