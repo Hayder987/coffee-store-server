@@ -34,11 +34,41 @@ async function run() {
         const result = await allData.toArray()
         res.send(result)
     })
+
+    app.get('/coffees/:id', async(req, res)=>{
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await userCollection.findOne(query)
+        res.send(result)
+    })
     
     app.post('/coffees', async(req, res)=>{
         const coffee = req.body;
         const result = await userCollection.insertOne(coffee)
         res.send(result)
+    })
+
+    app.put("/coffees/:id", async(req, res)=>{
+        const id = req.params.id;
+        const coffee = req.body;
+        const filter = {_id: new ObjectId(id)}
+        const options = { upsert: true };
+        const {name, chef, supplier, taste, category, details, imgPath} = coffee || {}
+
+         const updateDoc = {
+            $set: {
+              name : name,
+              chef: chef,
+              supplier: supplier,
+              taste : taste,
+              category: category,
+              details: details,
+              imgPath: imgPath
+            },
+          };
+
+          const result = await userCollection.updateOne(filter, updateDoc, options);
+          res.send(result)
     })
 
     app.delete('/coffees/:id', async(req, res)=>{
